@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<!--
+  ================================================================
+  Archivo : index.html
+  Propósito: Página de ventas (landing page) principal de Imperio Millonario.
+             Presenta la propuesta de valor, el problema del emprendedor,
+             la solución, el equipo y la oferta de membresía.
+  Estructura:
+    1. HEAD         — metadatos, fuentes, CSS, Lucide icons
+    2. CANVAS       — partículas animadas en el fondo
+    3. MOBILE NAV   — menú overlay para pantallas pequeñas
+    4. HEADER/NAV   — barra de navegación fija
+    5. HERO         — sección principal con propuesta de valor
+    6. PROBLEMA     — 8 pain points del emprendedor + callout
+    7. SOLUCIÓN     — sistema paso a paso (2 bloques)
+    8. AA-STRIP     — banda animada "Aprende · Aplica · Escala..."
+    9. NOSOTROS     — equipo, foto, mentores
+   10. OFERTA       — beneficios de la membresía + pricing card
+   11. CIERRE       — CTA final con tagline
+   12. FOOTER       — copyright y marca
+   13. BACK TO TOP  — botón flotante
+  ================================================================
+-->
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Imperio Millonario — No Es Suerte. Es Estrategia.</title>
+
+  <!-- Favicon del sitio -->
+  <link rel="icon" href="assets/logo.png" type="image/png" />
+
+  <!-- Preconexión a Google Fonts para reducir latencia (DNS + TLS por adelantado) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <!--
+    Fuentes tipográficas:
+      - Cinzel: serif elegante para títulos y números de sección
+      - Inter: sans-serif moderna para cuerpo de texto y botones
+  -->
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Hoja de estilos principal del sitio -->
+  <link rel="stylesheet" href="css/styles.css" />
+
+  <!--
+    Lucide Icons (UMD build desde CDN unpkg).
+    Se carga aquí en el HEAD para que esté disponible cuando
+    main.js llame a lucide.createIcons() al final del body.
+  -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+</head>
+<body>
+
+  <!-- SECCIÓN: Canvas de partículas — lienzo fijo detrás de todo el contenido.
+       Las secciones con fondo sólido (section-alt, section-dark, .closing, footer)
+       lo tapan visualmente; solo queda visible donde el fondo es transparente.
+       Controlado por el IIFE de partículas en js/main.js. -->
+  <canvas id="particles"></canvas>
+
+  <!-- SECCIÓN: Menú overlay para móvil.
+       Oculto por defecto (display:none). Se activa/desactiva con toggleMobile()
+       y closeMobile() desde js/main.js. Cubre toda la pantalla con fondo oscuro
+       translúcido y muestra los mismos links que la barra de navegación. -->
+  <div class="mobile-nav" id="mobileNav">
+    <button class="mobile-close" onclick="closeMobile()">✕</button>
+    <nav>
+      <a href="#problema"  onclick="closeMobile()">El Problema</a>
+      <a href="#solucion"  onclick="closeMobile()">La Solución</a>
+      <a href="#nosotros"  onclick="closeMobile()">Nosotros</a>
+      <a href="#oferta"    onclick="closeMobile()">Membresía</a>
+      <a href="#oferta"    onclick="closeMobile()" class="mobile-cta">Únete Ahora</a>
+    </nav>
+  </div>
+
+  <!-- SECCIÓN: Barra de navegación fija (sticky header).
+       Permanece en la cima al hacer scroll. Cuando el usuario baja más de
+       60px, main.js agrega la clase .scrolled que activa el fondo oscuro
+       con blur. En pantallas pequeñas (<700px) los links se ocultan y
+       aparece el botón hamburger. -->
+  <header id="navbar">
+    <a href="#hero"><img src="assets/logo.png" alt="Imperio Millonario" class="nav-logo" /></a>
+    <nav class="nav-links">
+      <a href="#problema">El Problema</a>
+      <a href="#solucion">La Solución</a>
+      <a href="#nosotros">Nosotros</a>
+      <a href="#oferta">Membresía</a>
+      <a href="#oferta" class="nav-cta">Únete Ahora</a>
+    </nav>
+    <!-- Botón hamburger: solo visible en móvil. Las tres spans forman las
+         tres líneas del ícono. Con la clase .open se transforma en una X. -->
+    <button class="hamburger" id="hamburger" onclick="toggleMobile()" aria-label="Menú">
+      <span></span><span></span><span></span>
+    </button>
+  </header>
+
+  <main>
+
+    <!-- ═══════════════════════════════════════════
+         SECCIÓN: Hero — Propuesta de valor principal
+         Ocupa el 100vh de la pantalla inicial. Divide en dos columnas:
+         izquierda (texto + CTA) y derecha (composición de fotos flotantes).
+         Incluye un scroll cue y un ticker animado en el borde inferior.
+    ═══════════════════════════════════════════ -->
+    <section id="hero">
+
+      <div class="hero-inner container">
+
+        <!-- IZQUIERDA: contenido textual del hero -->
+        <div class="hero-body">
+          <!-- Línea decorativa dorada encima del pill (elemento visual) -->
+          <div class="hero-deco-line reveal" style="--d:0s"></div>
+
+          <!-- Etiqueta pill: tagline de la marca -->
+          <span class="pill reveal" style="--d:.05s">No Es Suerte · Es Estrategia</span>
+
+          <!-- Pregunta 1: apunta al emprendedor con idea/negocio sin ingresos -->
+          <h1 class="reveal" style="--d:.15s">
+            ¿Tienes una idea millonaria o un negocio, pero todavía no facturas lo que
+            <em>realmente mereces?</em>
+          </h1>
+
+          <!-- Pregunta 2: refuerza el dolor de estancamiento -->
+          <p class="hero-q2 reveal" style="--d:.28s">
+            ¿Tienes una idea o un negocio, pero sientes que <strong>no avanza como debería?</strong>
+          </p>
+
+          <!-- CTA principal del hero -->
+          <div class="btn-row reveal" style="--d:.4s">
+            <a href="#oferta" class="btn btn-gold btn-lg">Quiero Construir Mi Imperio</a>
+          </div>
+        </div>
+
+        <!-- DERECHA: composición de fotos flotantes de los fundadores.
+             Tres foto-cards superpuestas con animación de flotación individual,
+             un glow radial, patrón de puntos y un anillo decorativo.
+             El watermark del logo aparece como marca de agua sutil al fondo. -->
+        <div class="hero-photos reveal" style="--d:.1s">
+          <div class="photo-glow"></div>
+          <div class="photo-dots"></div>
+          <div class="photo-ring"></div>
+          <div class="photo-stack">
+            <!-- Foto izquierda: inclinada -9° con animación pf1 -->
+            <div class="photo-card p-left">
+              <img src="assets/foto (1).jpeg" alt="Fundadora Imperio Millonario" />
+            </div>
+            <!-- Foto centro: la más grande, protagonista, inclinada -1° con animación pf2 -->
+            <div class="photo-card p-center">
+              <img src="assets/foto (2).jpeg" alt="Directora Imperio Millonario" />
+            </div>
+            <!-- Foto derecha: inclinada +8.5° con animación pf3 -->
+            <div class="photo-card p-right">
+              <img src="assets/foto (3).jpeg" alt="Co-Fundador Imperio Millonario" />
+            </div>
+          </div>
+          <!-- Watermark del logo: opacidad 18%, solo decorativo -->
+          <img src="assets/logo.png" alt="" class="hero-watermark" />
+        </div>
+
+      </div><!-- /hero-inner -->
+
+      <!-- Indicador visual para hacer scroll: bobble animado con línea dorada -->
+      <div class="scroll-cue">
+        <span>Scroll</span>
+        <div class="scroll-line"></div>
+      </div>
+
+      <!-- Ticker animado en el borde inferior del hero.
+           El contenido se duplica en el HTML para que la animación CSS
+           sea continua sin saltos (la mitad se muestra, la otra mitad
+           entra desde la derecha). -->
+      <div class="ticker-wrap">
+        <div class="ticker-track" id="tickerTrack">
+          <span>Estrategia</span><span class="dot">◆</span>
+          <span>Ventas</span><span class="dot">◆</span>
+          <span>Mentalidad</span><span class="dot">◆</span>
+          <span>Inteligencia Artificial</span><span class="dot">◆</span>
+          <span>Comunidad</span><span class="dot">◆</span>
+          <span>Ingresos</span><span class="dot">◆</span>
+          <span>Libertad Financiera</span><span class="dot">◆</span>
+          <span>Redes Sociales</span><span class="dot">◆</span>
+          <span>Automatización</span><span class="dot">◆</span>
+          <span>Escalabilidad</span><span class="dot">◆</span>
+          <span>Estrategia</span><span class="dot">◆</span>
+          <span>Ventas</span><span class="dot">◆</span>
+          <span>Mentalidad</span><span class="dot">◆</span>
+          <span>Inteligencia Artificial</span><span class="dot">◆</span>
+          <span>Comunidad</span><span class="dot">◆</span>
+          <span>Ingresos</span><span class="dot">◆</span>
+          <span>Libertad Financiera</span><span class="dot">◆</span>
+          <span>Redes Sociales</span><span class="dot">◆</span>
+          <span>Automatización</span><span class="dot">◆</span>
+          <span>Escalabilidad</span><span class="dot">◆</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════
+         SECCIÓN: El Problema (01)
+         Grid de 8 pain cards, una por cada problema común del emprendedor.
+         Cada card tiene un ícono X en rojo para reforzar el dolor.
+         Al final, un callout-box consolida la emoción y presenta el CTA.
+    ═══════════════════════════════════════════ -->
+    <section id="problema" class="section">
+      <div class="container">
+        <div class="section-head fade-in">
+          <span class="section-num">01</span>
+          <span class="pill pill-sm">El Problema</span>
+          <h2>¿Te suena familiar alguna<br>de estas situaciones?</h2>
+          <p class="lead">La mayoría de emprendedores enfrenta estos mismos desafíos.</p>
+        </div>
+
+        <!-- Grid de 8 pain points — cada card tiene un --d escalonado para entrada en cascada -->
+        <div class="pain-grid">
+          <div class="pain-card fade-in" style="--d:.05s">
+            <div class="pain-x"><i data-lucide="x"></i></div>
+            <p>No sabes cómo atraer prospectos y clientes todos los días.</p>
+          </div>
+          <div class="pain-card fade-in" style="--d:.10s">
+            <div class="pain-x"><i data-lucide="x"></i></div>
+            <p>No sabes qué contenido grabar ni qué publicar para generar resultados.</p>
+          </div>
+          <div class="pain-card fade-in" style="--d:.15s">
+            <div class="pain-x"><i data-lucide="x"></i></div>
+            <p>Te cuesta convertir seguidores, vistas y mensajes en ventas reales.</p>
+          </div>
+          <div class="pain-card fade-in" style="--d:.20s">
+            <div class="pain-x"><i data-lucide="x"></i></div>
+            <p>No tienes un sistema de ventas que funcione de manera constante.</p>
+          </div>
+          <div class="pain-card fade-in" style="--d:.25s">
+            <div class="pain-x"><i data-lucide="x"></i></div>
+            <p>No sabes cómo cerrar ventas con seguridad y confianza.</p>
+          </div>
+          <div class="pain-card fade-in" style="--d:.30s">
+            <div class="pain-x"><i data-lucide="x"></i></div>
+            <p>No sabes cómo construir una comunidad que confíe en tu marca y compre tus productos o servicios.</p>
+          </div>
+          <div class="pain-card fade-in" style="--d:.35s">
+            <div class="pain-x"><i data-lucide="x"></i></div>
+            <p>No sabes cómo utilizar la Inteligencia Artificial para crear contenido, automatizar procesos y vender más.</p>
+          </div>
+          <div class="pain-card fade-in" style="--d:.40s">
+            <div class="pain-x"><i data-lucide="x"></i></div>
+            <p>Te sientes estancado porque no tienes una estrategia clara para crecer y escalar tu negocio.</p>
+          </div>
+        </div>
+
+        <!-- Callout de cierre: valida el dolor, presenta el CTA y el tagline -->
+        <div class="callout-box fade-in">
+          <p class="callout-text">Si esto te sucede, <strong>no estás solo.</strong><br>La mayoría de emprendedores enfrenta estos mismos desafíos.</p>
+          <a href="#oferta" class="btn btn-gold">Quiero Construir Mi Imperio</a>
+          <p class="callout-tag">No es suerte. Es estrategia.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════
+         SECCIÓN: La Solución (02)
+         Dos bloques de contenido que presentan el sistema de Imperio Millonario:
+           - Bloque 1 (fade-left): lista de habilidades que enseña la comunidad
+           - Bloque 2 (fade-right): contexto del problema + pasos numerados 01-08
+    ═══════════════════════════════════════════ -->
+    <section id="solucion" class="section section-alt">
+      <div class="container">
+        <div class="section-head fade-in">
+          <span class="section-num">02</span>
+          <span class="pill pill-sm">La Solución</span>
+          <h2>No necesitas más información.<br>Necesitas una <span class="gold">estrategia,<br>un sistema y una comunidad.</span></h2>
+        </div>
+
+        <!-- Bloque 1: qué enseña Imperio Millonario (check-list en grid de 2 columnas) -->
+        <div class="sol-block fade-left">
+          <h3 class="sol-block-title">En Imperio Millonario te enseñamos cómo:</h3>
+          <ul class="check-list check-grid">
+            <li><span class="ck"><i data-lucide="check"></i></span> Construir una marca que genere confianza.</li>
+            <li><span class="ck"><i data-lucide="check"></i></span> Atraer prospectos y vender por redes sociales.</li>
+            <li><span class="ck"><i data-lucide="check"></i></span> Automatizar WhatsApp con Inteligencia Artificial y atender clientes 24/7.</li>
+            <li><span class="ck"><i data-lucide="check"></i></span> Generar más ventas, ahorrar tiempo y hacer crecer tu negocio.</li>
+            <li><span class="ck"><i data-lucide="check"></i></span> Crear campañas más efectivas con ayuda de la IA.</li>
+            <li><span class="ck"><i data-lucide="check"></i></span> Generar ideas de contenido en minutos.</li>
+            <li><span class="ck"><i data-lucide="check"></i></span> Descubrir qué está funcionando hoy en redes sociales.</li>
+            <li><span class="ck"><i data-lucide="check"></i></span> Convertir tendencias en oportunidades reales de negocio.</li>
+          </ul>
+          <p class="sol-quote">Porque emprender no debería ser cuestión de adivinar.<br><strong>Debería ser cuestión de seguir un sistema.</strong></p>
+        </div>
+
+        <!-- Bloque 2: contexto del mercado + pasos numerados del sistema (step-list) -->
+        <div class="sol-block sol-block-alt fade-right">
+          <p class="sol-text">Internet está lleno de videos, cursos, tutoriales y consejos. El problema es que la mayoría de emprendedores no sabe qué hacer primero.</p>
+          <p class="sol-text">En Imperio Millonario reunimos en un solo lugar las herramientas, estrategias y conocimientos que necesitas para construir un negocio rentable.</p>
+          <h3 class="sol-block-title">Te enseñamos paso a paso:</h3>
+          <!-- Lista de 8 pasos numerados con borde dorado izquierdo -->
+          <ul class="step-list fade-in">
+            <li><span class="step-num">01</span><span>Cómo construir una marca desde cero.</span></li>
+            <li><span class="step-num">02</span><span>Cómo crear una oferta irresistible.</span></li>
+            <li><span class="step-num">03</span><span>Cómo atraer prospectos todos los días.</span></li>
+            <li><span class="step-num">04</span><span>Cómo vender utilizando redes sociales.</span></li>
+            <li><span class="step-num">05</span><span>Cómo utilizar Inteligencia Artificial para vender más.</span></li>
+            <li><span class="step-num">06</span><span>Cómo automatizar procesos.</span></li>
+            <li><span class="step-num">07</span><span>Cómo ahorrar tiempo.</span></li>
+            <li><span class="step-num">08</span><span>Cómo escalar tu negocio.</span></li>
+          </ul>
+          <p class="sol-quote">Porque emprender no debería ser cuestión de adivinar.<br><strong>Debería ser cuestión de seguir un sistema.</strong></p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECCIÓN: Banda animada "Aprende · Aplica · Escala..."
+         Separador visual entre Solución y Nosotros. Usa la misma animación
+         ticker que el hero pero con texto más grande y sin fondo dorado.
+         El contenido se duplica para un loop infinito sin corte visible. -->
+    <div class="aa-strip">
+      <div class="aa-track">
+        <span>Aprende</span><span class="aa-sep">·</span>
+        <span>Aplica</span><span class="aa-sep">·</span>
+        <span>Escala</span><span class="aa-sep">·</span>
+        <span>Impacta</span><span class="aa-sep">·</span>
+        <span class="aa-highlight">Vive en Libertad</span>
+        <span class="aa-sep">·</span>
+        <span>Aprende</span><span class="aa-sep">·</span>
+        <span>Aplica</span><span class="aa-sep">·</span>
+        <span>Escala</span><span class="aa-sep">·</span>
+        <span>Impacta</span><span class="aa-sep">·</span>
+        <span class="aa-highlight">Vive en Libertad</span>
+        <span class="aa-sep">·</span>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════
+         SECCIÓN: Quiénes Somos (03)
+         Presenta al equipo con texto, foto grupal y grid de 5 mentores.
+         La foto y caption están en un grid 1.4fr / 1fr (imagen más grande).
+         El grid de mentores es 5 columnas en desktop, se reduce en responsive.
+    ═══════════════════════════════════════════ -->
+    <section id="nosotros" class="section">
+      <div class="container">
+        <div class="section-head fade-in">
+          <span class="section-num">03</span>
+          <span class="pill pill-sm">Quiénes Somos</span>
+          <h2>No te enseñamos solo teoría. Te enseñamos lo que hemos aplicado y te acompañamos <span class="gold">paso a paso en el proceso.</span></h2>
+        </div>
+
+        <!-- Texto introductorio del equipo -->
+        <div class="nosotros-body fade-in">
+          <p>Porque no solo aprendes. <strong>Te acompañamos durante todo el proceso</strong> para que implementes cada estrategia, superes obstáculos y avances con claridad hacia tus objetivos.</p>
+          <p>Nuestro equipo y comunidad estarán contigo para resolver dudas, brindarte orientación y ayudarte a convertir el conocimiento en resultados reales para tu negocio.</p>
+          <p class="highlight-text"><strong>Menos teoría. Más acción, seguimiento y apoyo en cada paso.</strong></p>
+        </div>
+
+        <!-- Foto del equipo con caption lateral -->
+        <div class="team-wrap fade-in">
+          <img src="assets/portada.jpg" alt="Equipo Imperio Millonario" class="team-photo" />
+          <div class="team-caption">
+            <!-- Logo pequeño decorativo encima del texto -->
+            <img src="assets/logo.png" alt="" class="caption-logo" />
+            <p>Durante años hemos invertido tiempo, dinero y esfuerzo aprendiendo de algunos de los empresarios y mentores más reconocidos de habla hispana.</p>
+            <p><strong>Pero lo más importante no es de quién aprendimos. Lo más importante es que hemos aplicado estas estrategias, recorrido el camino, cometido errores y construido sistemas que hoy funcionan.</strong></p>
+          </div>
+        </div>
+
+        <!-- Grid de 5 mentores con iniciales como avatar dorado -->
+        <h3 class="mentors-title fade-in">Nos hemos formado con referentes como:</h3>
+        <div class="mentors-grid">
+          <div class="mentor-card fade-in" style="--d:.05s">
+            <div class="mentor-av">SH</div>
+            <h4>Spencer Hoffman</h4>
+            <p>Mentor internacional especializado en ventas, liderazgo y desarrollo empresarial.</p>
+          </div>
+          <div class="mentor-card fade-in" style="--d:.10s">
+            <div class="mentor-av">JS</div>
+            <h4>Jorge Serratos</h4>
+            <p>Experto en marketing digital, embudos de ventas y automatización de negocios.</p>
+          </div>
+          <div class="mentor-card fade-in" style="--d:.15s">
+            <div class="mentor-av">ML</div>
+            <h4>Manuel de León</h4>
+            <p>Especialista en crecimiento empresarial, posicionamiento de marca y estrategias digitales.</p>
+          </div>
+          <div class="mentor-card fade-in" style="--d:.20s">
+            <div class="mentor-av">MP</div>
+            <h4>Margarita Pasos</h4>
+            <p>Conferencista internacional experta en mentalidad, liderazgo y crecimiento personal.</p>
+          </div>
+          <div class="mentor-card fade-in" style="--d:.25s">
+            <div class="mentor-av">JO</div>
+            <h4>Julián Otaola</h4>
+            <p>Empresario y mentor especializado en riqueza, emprendimiento y libertad financiera.</p>
+          </div>
+        </div>
+
+        <p class="nosotros-cierre fade-in">Nuestro objetivo es ayudarte a avanzar más rápido y evitar años de prueba y error.</p>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════
+         SECCIÓN: Oferta — Tu Membresía (04)
+         Layout de dos columnas: lista de beneficios (izquierda) y
+         pricing card sticky (derecha). La card usa position:sticky para
+         mantenerse visible mientras el usuario scrollea los beneficios.
+    ═══════════════════════════════════════════ -->
+    <section id="oferta" class="section section-dark">
+      <div class="container">
+        <div class="section-head fade-in">
+          <span class="section-num">04</span>
+          <span class="pill pill-sm">Tu Membresía</span>
+          <h2>Todo lo que incluye<br><span class="gold">tu afiliación</span></h2>
+          <p class="lead">Nuestro objetivo no es darte más teoría. Nuestro objetivo es ayudarte a <strong>generar resultados.</strong></p>
+        </div>
+
+        <div class="offer-layout">
+
+          <!-- Columna izquierda: 9 beneficios con ícono Lucide y entrada escalonada -->
+          <div class="benefits-col">
+            <div class="benefit-item fade-in" style="--d:.05s">
+              <div class="benefit-icon"><i data-lucide="globe"></i></div>
+              <h4>Landing Page profesional para tu negocio.</h4>
+            </div>
+            <div class="benefit-item fade-in" style="--d:.10s">
+              <div class="benefit-icon"><i data-lucide="lightbulb"></i></div>
+              <h4>Clase semanal de crecimiento personal y mentalidad.</h4>
+            </div>
+            <div class="benefit-item fade-in" style="--d:.15s">
+              <div class="benefit-icon"><i data-lucide="bot"></i></div>
+              <h4>Clase semanal de Inteligencia Artificial aplicada a negocios.</h4>
+            </div>
+            <div class="benefit-item fade-in" style="--d:.20s">
+              <div class="benefit-icon"><i data-lucide="briefcase"></i></div>
+              <h4>Entrenamientos sobre ventas y cierres.</h4>
+            </div>
+            <div class="benefit-item fade-in" style="--d:.25s">
+              <div class="benefit-icon"><i data-lucide="smartphone"></i></div>
+              <h4>Estrategias para redes sociales.</h4>
+            </div>
+            <div class="benefit-item fade-in" style="--d:.30s">
+              <div class="benefit-icon"><i data-lucide="book-open"></i></div>
+              <h4>Biblioteca de contenido grabado.</h4>
+            </div>
+            <div class="benefit-item fade-in" style="--d:.35s">
+              <div class="benefit-icon"><i data-lucide="users"></i></div>
+              <h4>Comunidad privada de emprendedores.</h4>
+            </div>
+            <div class="benefit-item fade-in" style="--d:.40s">
+              <div class="benefit-icon"><i data-lucide="wrench"></i></div>
+              <h4>Herramientas, plantillas y recursos.</h4>
+            </div>
+            <div class="benefit-item fade-in" style="--d:.45s">
+              <div class="benefit-icon"><i data-lucide="refresh-cw"></i></div>
+              <h4>Actualizaciones permanentes.</h4>
+            </div>
+          </div>
+
+          <!-- Columna derecha: pricing card sticky.
+               Incluye una barra animada en el top, un brillo radial decorativo,
+               el desglose de precios (ingreso + mensualidad) y la lista resumida
+               de beneficios antes del botón CTA. -->
+          <div class="pricing-card fade-scale">
+            <!-- Brillo radial sutil en la parte superior de la card -->
+            <div class="pricing-shine"></div>
+            <!-- Barra superior animada con degradado dorado-azul (shimbar) -->
+            <div class="pricing-top-bar"></div>
+
+            <span class="pricing-badge">Membresía Imperio Millonario</span>
+            <img src="assets/logo.png" alt="" class="pricing-logo" />
+
+            <p class="pricing-label">Inversión de ingreso</p>
+            <!-- Desglose de precios: costo de acceso + mensualidad -->
+            <div class="price-breakdown">
+              <div class="price-row">
+                <span>Costo de acceso a la membresía</span>
+                <strong>$100.000 COP</strong>
+              </div>
+              <div class="price-row">
+                <span>Mensualidad</span>
+                <strong>$150.000 COP</strong>
+              </div>
+              <div class="price-row price-row-total">
+                <span>A partir del segundo mes, la mensualidad será de $150.000 COP.</span>
+              </div>
+            </div>
+            <p class="pricing-eco">Incluye acceso completo al ecosistema Imperio Millonario.</p>
+
+            <!-- Lista resumida de beneficios (replica la columna izquierda en texto) -->
+            <ul class="pricing-list">
+              <li>Landing Page profesional para tu negocio</li>
+              <li>Clase semanal de crecimiento personal y mentalidad</li>
+              <li>Clase semanal de Inteligencia Artificial aplicada a negocios</li>
+              <li>Entrenamientos sobre ventas y cierres</li>
+              <li>Estrategias para redes sociales</li>
+              <li>Biblioteca de contenido grabado</li>
+              <li>Comunidad privada de emprendedores</li>
+              <li>Herramientas, plantillas y recursos</li>
+              <li>Actualizaciones permanentes</li>
+            </ul>
+
+            <a href="#" class="btn btn-gold btn-block">Quiero Ingresar Ahora</a>
+          </div>
+
+        </div><!-- /offer-layout -->
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════
+         SECCIÓN: Cierre — CTA final
+         Sección con fondo transparente (el canvas de partículas queda visible).
+         Presenta el tagline central "No Es Suerte. Es Estrategia." con
+         animación de glow en el texto dorado y el CTA final.
+    ═══════════════════════════════════════════ -->
+    <section class="closing fade-scale">
+      <div class="container closing-inner">
+        <img src="assets/logo.png" alt="Imperio Millonario" class="closing-logo" />
+        <!-- Texto emocional de cierre antes del tagline -->
+        <p class="closing-pre">Tu problema no es la falta de ideas.<br>Tu problema es que nadie te enseñó cómo convertirlas en ingresos.</p>
+        <p class="closing-bold">Nosotros sí.</p>
+        <!-- Tagline principal: "muted" para la primera línea, "glow" para la segunda -->
+        <h2 class="closing-h">
+          <span class="muted-txt">No Es Suerte.</span><br>
+          <span class="glow-word">Es Estrategia.</span>
+        </h2>
+        <!-- Etiqueta decorativa con ícono de trofeo -->
+        <p class="closing-tag"><i data-lucide="trophy"></i> Construye Tu Imperio</p>
+        <a href="#oferta" class="btn btn-gold btn-lg">Quiero Construir Mi Imperio</a>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- SECCIÓN: Footer — copyright y tagline de marca -->
+  <footer>
+    <div class="footer-inner container">
+      <img src="assets/logo.png" alt="Imperio Millonario" class="footer-logo" />
+      <p class="footer-copy">© 2025 Imperio Millonario. Todos los derechos reservados.</p>
+      <p class="footer-tag">No Es Suerte. Es Estrategia.</p>
+    </div>
+  </footer>
+
+  <!-- SECCIÓN: Botón "Volver arriba" flotante.
+       Oculto por defecto (opacity:0). main.js agrega la clase .show
+       cuando el usuario scrollea más de 500px. Hace scroll suave al top. -->
+  <button id="topBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Volver arriba">↑</button>
+
+  <!-- Script principal: partículas, navbar, animaciones, tilt, magnético, menú móvil -->
+  <script src="js/main.js"></script>
+</body>
+</html>
