@@ -1,32 +1,50 @@
 /* ================================================================
-   TOKENS
+   css/styles.css — Imperio Millonario
+   Sistema de diseño completo para la landing page.
+
+   Z-INDEX STACKING (de abajo hacia arriba):
+     0   → #particles   (canvas fijo, detrás de todo)
+     1   → .section, footer, .closing, .aa-strip  (contenido normal)
+     2   → .hero-body, .hero-inner  (texto sobre decorados del hero)
+     190 → .mobile-nav  (overlay de menú móvil)
+     200 → #navbar      (barra de navegación, siempre encima)
+
+   NOTA CLAVE: Las secciones con fondo sólido (section-alt, section-dark,
+   footer) tapan el canvas. La sección .closing tiene background:transparent
+   para que el canvas de partículas sea visible a través de ella.
+================================================================ */
+
+/* ================================================================
+   TOKENS — Variables globales de diseño
+   Cambiar cualquier valor aquí afecta todo el sitio.
+   Estructura: fondos → texto → dorado → azul → bordes → sombras → radios
 ================================================================ */
 :root {
-  /* backgrounds */
-  --bg:       #070707;
-  --bg-2:     #0D0D0D;
-  --bg-3:     #131313;
-  --bg-card:  #111111;
+  /* Fondos: escala de oscuridad creciente para jerarquía visual */
+  --bg:       #070707;   /* fondo base del body */
+  --bg-2:     #0D0D0D;   /* secciones alternadas (.section-alt) */
+  --bg-3:     #131313;   /* secciones oscuras (.section-dark) */
+  --bg-card:  #111111;   /* tarjetas y bloques internos */
 
-  /* texto — TODOS sobre fondo oscuro con contraste suficiente */
+  /* Texto: TODOS sobre fondo oscuro — nunca bajar de --txt-3 */
   --txt:      #F0F0F0;   /* cuerpo principal */
-  --txt-2:    #BBBBBB;   /* secundario */
-  --txt-3:    #888888;   /* muted — mínimo, nunca más oscuro */
+  --txt-2:    #BBBBBB;   /* texto secundario / párrafos */
+  --txt-3:    #888888;   /* texto muted / etiquetas */
 
-  /* dorado */
-  --gold:     #C9A142;
-  --gold-lt:  #E8C265;
-  --gold-dk:  #8B6210;
-  --gold-br:  #FFD055;
+  /* Dorado: paleta del color principal del logo */
+  --gold:     #C9A142;   /* dorado base */
+  --gold-lt:  #E8C265;   /* dorado claro — highlights */
+  --gold-dk:  #8B6210;   /* dorado oscuro — inicio de gradientes */
+  --gold-br:  #FFD055;   /* dorado brillante — énfasis máximo */
 
-  /* azul acento (del logo) */
+  /* Azul: segundo color del logo, usado como acento en partículas */
   --blue:     #4DAAFF;
 
-  /* bordes */
-  --bd:       rgba(255,255,255,0.09);
-  --bd-gold:  rgba(201,161,66,0.35);
+  /* Bordes */
+  --bd:       rgba(255,255,255,0.09);   /* borde sutil blanco */
+  --bd-gold:  rgba(201,161,66,0.35);    /* borde dorado */
 
-  /* sombras */
+  /* Sombras */
   --sh:       0 4px 32px rgba(0,0,0,0.6);
   --sh-gold:  0 8px 40px rgba(201,161,66,0.22);
 
@@ -57,7 +75,12 @@ strong { font-weight: 700; color: var(--txt); }
 ::-webkit-scrollbar-thumb    { background: var(--gold); border-radius: 3px; }
 
 /* ================================================================
-   CANVAS
+   CANVAS — Fondo de partículas animadas
+   Fijo en pantalla, detrás de todo el contenido (z-index: 0).
+   pointer-events:none → el mouse sigue interactuando con el contenido.
+   opacity:.65 → sutil, no compite con el texto.
+   Las secciones con fondo sólido lo tapan. Solo .closing lo deja visible
+   porque tiene background:transparent.
 ================================================================ */
 #particles {
   position: fixed;
@@ -76,6 +99,8 @@ strong { font-weight: 700; color: var(--txt); }
   margin: 0 auto;
   padding: 0 2rem;
 }
+/* z-index:1 en .section hace que el fondo sólido tape el canvas (z-index:0).
+   Sin esto, el canvas se vería encima del contenido de la sección. */
 .section  { padding: 7rem 0; position: relative; z-index: 1; }
 .section-alt  { background: var(--bg-2); }
 .section-dark { background: var(--bg-3); }
@@ -198,6 +223,15 @@ p { color: var(--txt-2); }
 
 /* ================================================================
    SCROLL ANIMATIONS
+   IntersectionObserver en main.js agrega .visible cuando el elemento
+   entra al viewport. El estado inicial (sin .visible) mantiene el elemento
+   invisible y desplazado. La transición hace el resto.
+
+   Delay escalonado: usar style="--d:.15s" en el HTML inyecta un retraso
+   individual por elemento. calc(var(--d,0s)) lo toma como delay de la
+   transición. Permite cascadas sin necesidad de nth-child en CSS.
+
+   cubic-bezier(.22,1,.36,1) = easing tipo spring — entra rápido, frena suave.
 ================================================================ */
 .fade-in {
   opacity: 0;
@@ -642,6 +676,9 @@ p { color: var(--txt-2); }
   margin-bottom: 4rem;
   position: relative;
 }
+/* Número decorativo de sección (01, 02...). El margin-bottom negativo hace
+   que el h2 que viene después se superponga visualmente sobre el número,
+   creando el efecto de profundidad sin necesitar position:absolute. */
 .section-num {
   display: block;
   font-family: 'Cinzel', serif;
@@ -979,7 +1016,9 @@ p { color: var(--txt-2); }
 .benefit-item h4 { font-size: .95rem; margin-bottom: .2rem; }
 .benefit-item p  { font-size: .85rem; color: var(--txt-2); line-height: 1.55; margin: 0; }
 
-/* pricing card */
+/* pricing card — sticky para mantenerse visible mientras el usuario
+   scrollea la lista de beneficios. top:6rem = altura del navbar (.85rem
+   de padding × 2 + logo), así no queda tapada por la barra. */
 .pricing-card {
   position: sticky;
   top: 6rem;
@@ -1077,7 +1116,11 @@ p { color: var(--txt-2); }
 .pricing-secure { margin-top: 1rem; font-size: .7rem; color: var(--txt-3); }
 
 /* ================================================================
-   CIERRE
+   CIERRE — CTA final con partículas visibles de fondo
+   background:transparent es intencional: deja ver el canvas de partículas
+   (z-index:0) a través de la sección. El contenido tiene z-index:1 via
+   .closing-inner para quedar encima del canvas.
+   NO agregar background sólido aquí — arruinaría el efecto de red.
 ================================================================ */
 .closing {
   position: relative;
@@ -1140,7 +1183,7 @@ footer {
   flex-wrap: wrap;
   gap: 1rem;
 }
-.footer-logo { height: 40px; }
+.footer-logo { height: 58px; }
 .footer-copy { font-size: .72rem; color: var(--txt-3); }
 .footer-tag  { font-size: .72rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--gold); }
 
@@ -1193,7 +1236,13 @@ footer {
 }
 
 /* ================================================================
-   RESPONSIVE
+   RESPONSIVE — Breakpoints móvil
+   ≤1100px  Tablet landscape: offer layout en 1 columna
+   ≤900px   Tablet portrait: hero pasa a 1 columna (fotos arriba)
+   ≤860px   Listas de solución en 1 columna
+   ≤700px   Móvil: hamburger activo, padding reducido, footer vertical
+   ≤480px   Teléfono pequeño: fotos más pequeñas, mentores 1 columna
+   ≤380px   Teléfono muy pequeño: tipografías y fotos mínimas
 ================================================================ */
 
 /* ── Tablet landscape ── */
